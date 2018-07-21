@@ -5,8 +5,8 @@ import tweepy
 import json
 from tweepy import OAuthHandler
 
-TOKEN = "190e67efb52a447b796f25a710921b4f"
-URL = "https://api.telegram.org/bot682620877:AAFbpRbWzbNPYQBUy6yzU6dTsPbst3L1hTc/".format(TOKEN)
+TOKEN = ""
+URL = "https://api.telegram.org/bot{fill api token}/".format(TOKEN)
 
 
 def config_twitt():
