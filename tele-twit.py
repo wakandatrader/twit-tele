@@ -6,27 +6,36 @@ import json
 from tweepy import OAuthHandler
 
 TOKEN = ""
-URL = "https://api.telegram.org/bot{fill api token}/".format(TOKEN)
-
+URL = "https://api.telegram.org/bot{fill api key}/".format(TOKEN)
+path = ""
 
 def config_twitt():
-    fo = open("config.json", "r")
+    fo = open(path+"config.json", "r")
     str = fo.read()
     d = json.loads(str)
     fo.close()
     return  d
 
 def config_cache():
-    fo = open("cache.json", "r")
+    fo = open(path+"cache.json", "r")
     str = fo.read()
     d = json.loads(str)
     fo.close()
     return  d
 
+def  whitelist_text():
+    fo = open(path+"whitelist.txt", "r")
+    str = fo.read()
+    d = str.splitlines()
+    fo.close()
+    return  d
+
+
 dict_cache=config_cache()
 
 twit_c = config_twitt()
-print twit_c
+whitelist_arr = whitelist_text()
+
 
 consumer_key = twit_c['consumer_key']
 consumer_secret = twit_c['consumer_secret']
@@ -68,34 +77,31 @@ def get_last_chat_id_and_text(updates):
 
 def send_message(text, chat_id):
     url = URL + "sendMessage?text={}&chat_id={}".format(text, chat_id)
-    print text
     get_url(url)
 
 def put_db_cache(config):
-    fo = open("cache.json", "wb")
+    fo = open(path+"cache.json", "wb")
     fo.write(json.dumps(config))
     fo.close()
 
-def get_db_cache():
-    pass
 
-
-# status = tweepy.Cursor(api.home_timeline).items(10)
-# print status
 db_cache = {}
-
+whitelist_arr = whitelist_text()
+print whitelist_arr
 for status in tweepy.Cursor(api.home_timeline).items(10):
-    # print json.dumps(status)
-    print status.id
-    if status.id in dict_cache:
-        print "already exist"
+    if str(status.id) in dict_cache:
+        print str(status.id) + " already exist"
     else:
-        print "send tele"
+        #if "listing" in status.text:
         n = status._json["user"]["screen_name"]
         s = str(status.text.encode('utf-8'))
-        text = str("@".encode('utf-8'))+str(n.encode('utf-8')) + " said " + s
-        send_message(text, "@tesgahol")
-
-    db_cache[status.id] = "1"
+        if [status.text for wtext in whitelist_arr if(wtext in status.text)]:
+            text = str("@".encode('utf-8'))+str(n.encode('utf-8')) + " said " +$
+            send_message(text, "@tesgahol")
+            print str(status.id) + " send tele"
+        else:
+            print str(status.id) + " not in list"
+    db_cache[status.id] = status.id
 
 put_db_cache(db_cache)
+
